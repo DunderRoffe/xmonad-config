@@ -20,18 +20,30 @@ import XMonad.Prompt.ConfirmPrompt
 import XMonad.Prompt.Shell
 import XMonad.Util.EZConfig
 
+-- Command to launch the bar.
+myBar = "xmobar"
+
+-- Custom PP, configure it as you like. It determines what is being written to the bar.
+myPP = xmobarPP { ppCurrent = xmobarColor "#429942" "" . wrap "<" ">" }
+
+-- Key binding to toggle the gap for the bar.
+toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
+
+-- Main configuration, override the defaults to your liking.
+myConfig = def { modMask = mod4Mask
+               , manageHook = myManageHook <+> manageHook desktopConfig
+               , layoutHook = desktopLayoutModifiers myLayouts
+               , logHook    = dynamicLogString def >>= xmonadPropLog
+               }
+
+
 --------------------------------------------------------------------------------
 main = do
-  spawn "xmobar" -- Start a task bar such as xmobar.
+  conf <- statusBar myBar myPP toggleStrutsKey myConfig
 
   -- Start xmonad using the main desktop configuration with a few
   -- simple overrides:
-  xmonad $ desktopConfig
-    { modMask    = mod4Mask -- Use the "Win" key for the mod key
-    , manageHook = myManageHook <+> manageHook desktopConfig
-    , layoutHook = desktopLayoutModifiers $ myLayouts
-    , logHook    = dynamicLogString def >>= xmonadPropLog
-    }
+  xmonad $ conf
 
     `additionalKeysP` -- Add some extra key bindings:
       [ ("M-S-q",   confirmPrompt myXPConfig "exit" (io exitSuccess))
