@@ -8,6 +8,7 @@ module Main (main) where
 --------------------------------------------------------------------------------
 import System.Exit
 import XMonad
+import XMonad.Actions.SpawnOn
 import XMonad.Config.Desktop
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageHelpers
@@ -38,9 +39,17 @@ terminalWorkspaceName = "Terminal" -- "Terminal"
 
 -- Main configuration, override the defaults to your liking.
 myConfig = def { modMask = mod4Mask
-               , manageHook = myManageHook <+> manageHook desktopConfig
+               , manageHook = manageSpawn <+> myManageHook <+> manageHook desktopConfig
                , layoutHook = desktopLayoutModifiers myLayouts
                , logHook    = dynamicLogString def >>= xmonadPropLog
+               , workspaces = myWorkspaces
+               , startupHook = do
+                               setWMName "LG3D"
+                               spawnOn webWorkspaceName "firefox"
+                               spawnOn emailWorkspaceName "thunderbird"
+                               spawnOn terminalWorkspaceName "terminator"
+                               spawnOn webWorkspaceName "xscreensaver"
+                               windows $ W.greedyView startupWorkspace
                }
 
 
