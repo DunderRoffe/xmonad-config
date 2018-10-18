@@ -11,6 +11,7 @@ import XMonad
 import XMonad.Config.Desktop
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.SetWMName
 import XMonad.Layout.BinarySpacePartition (emptyBSP)
 import XMonad.Layout.NoBorders (noBorders)
 import XMonad.Layout.ResizableTile (ResizableTall(..))
@@ -20,6 +21,8 @@ import XMonad.Prompt.ConfirmPrompt
 import XMonad.Prompt.Shell
 import XMonad.Util.EZConfig
 
+import qualified XMonad.StackSet as W
+
 -- Command to launch the bar.
 myBar = "xmobar"
 
@@ -28,6 +31,10 @@ myPP = xmobarPP { ppCurrent = xmobarColor "#429942" "" . wrap "<" ">" }
 
 -- Key binding to toggle the gap for the bar.
 toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
+
+webWorkspaceName = "Web" -- "Web"
+emailWorkspaceName = "Email" -- "Email"
+terminalWorkspaceName = "Terminal" -- "Terminal"
 
 -- Main configuration, override the defaults to your liking.
 myConfig = def { modMask = mod4Mask
@@ -50,6 +57,7 @@ main = do
       , ("M-p",     shellPrompt myXPConfig)
       , ("M-<Esc>", sendMessage (Toggle "Full"))
       ]
+
 
 --------------------------------------------------------------------------------
 -- | Customize layouts.
@@ -88,4 +96,14 @@ myManageHook = composeOne
     -- Move transient windows to their parent:
   , transience
   ]
+
+myWorkspaces =
+  [
+    webWorkspaceName,  emailWorkspaceName, terminalWorkspaceName,
+    "4",  "5", "6",
+    "7",  "8", "9",
+    "10", "11", "12"
+  ]
+
+startupWorkspace = webWorkspaceName  -- which workspace do you want to be on after launch?
 
